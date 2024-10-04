@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import handleAPI from '@/apis/handleAPI';
 
 const formSchema = z
   .object({
@@ -40,8 +41,14 @@ const SignUp = () => {
 
   const handleShowPassword = () => setShowPassword(!showPassword);
 
-  const onSubmit = async data => {
-    console.log(data);
+  const onSubmit = async values => {
+    console.log(values);
+    try {
+      const res = handleAPI('/auth/register', values, 'post');
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
