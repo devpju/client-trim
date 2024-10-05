@@ -21,16 +21,15 @@ const formSchema = z
   .object({
     fullName: z
       .string()
-      .min(10, { message: 'Nhập đầy đủ họ và tên' })
-      .transform(value => value.trim()) // Loại bỏ khoảng trắng
-      .regex(/^[^\d]*$/, { message: 'Họ và tên không được chứa số' }), // Không cho phép số
-    email: z.string().email({ message: 'Địa chỉ email không hợp lệ' }),
-    password: z.string().min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự' }),
-    confirmPassword: z.string().min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự' }),
+      .min(2, { message: 'Vui lòng đầy đủ họ và tên' })
+      .regex(/^[^\d]*$/, { message: 'Họ và tên không được chứa số' }),
+    email: z.string().email({ message: 'Email không hợp lệ' }),
+    password: z.string().min(2, { message: 'Mật khẩu tối thiểu 8 ký tự' }),
+    confirmPassword: z.string().min(2, { message: 'Mật khẩu tối thiểu 8 ký tự' }),
   })
   .refine(data => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
-    message: 'Mật khẩu không khớp',
+    message: "Passwords don't match",
   });
 
 const SignUp = () => {
@@ -59,7 +58,7 @@ const SignUp = () => {
       const res = await handleAPI(api, { fullName, email, password }, 'post');
       toast.success('Đăng ký thành công!');
       console.log(res.data);
-      navigate('/');
+      navigate('/sign-up');
     } catch (error) {
       toast.error(error?.message || 'Đã xảy ra lỗi khi đăng ký');
     } finally {
