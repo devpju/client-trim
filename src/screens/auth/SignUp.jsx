@@ -58,7 +58,7 @@ const SignUp = () => {
       const res = await handleAPI(api, { fullName, email, password }, 'post');
       toast.success('Đăng ký thành công!');
       console.log(res.data);
-      navigate('/sign-up');
+      navigate('/verify');
     } catch (error) {
       toast.error(error?.message || 'Đã xảy ra lỗi khi đăng ký');
     } finally {
