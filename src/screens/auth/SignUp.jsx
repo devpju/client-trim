@@ -12,27 +12,36 @@ import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Eye, EyeOff, LoaderCircle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import handleAPI from '@/apis/handleAPI';
+import { toast } from 'sonner';
 
 const formSchema = z
   .object({
-    email: z.string().email({ message: 'Invalid email address' }),
-    password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
-    confirmPassword: z.string().min(8, { message: 'Password must be at least 8 characters' }),
+    fullName: z
+      .string()
+      .min(10, { message: 'Nhập đầy đủ họ và tên' })
+      .transform(value => value.trim()) // Loại bỏ khoảng trắng
+      .regex(/^[^\d]*$/, { message: 'Họ và tên không được chứa số' }), // Không cho phép số
+    email: z.string().email({ message: 'Địa chỉ email không hợp lệ' }),
+    password: z.string().min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự' }),
+    confirmPassword: z.string().min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự' }),
   })
   .refine(data => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
-    message: "Passwords don't match",
+    message: 'Mật khẩu không khớp',
   });
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      fullName: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -42,12 +51,19 @@ const SignUp = () => {
   const handleShowPassword = () => setShowPassword(!showPassword);
 
   const onSubmit = async values => {
-    console.log(values);
+    const api = '/auth/register';
+    const { fullName, email, password } = values;
+
     try {
-      const res = handleAPI('/auth/register', values, 'post');
-      console.log(res);
+      setIsLoading(true);
+      const res = await handleAPI(api, { fullName, email, password }, 'post');
+      toast.success('Đăng ký thành công!');
+      console.log(res.data);
+      navigate('/');
     } catch (error) {
-      console.log(error);
+      toast.error(error?.message || 'Đã xảy ra lỗi khi đăng ký');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -60,6 +76,19 @@ const SignUp = () => {
             className='flex w-full flex-col gap-[34px] lg:w-[532px]'
             onSubmit={form.handleSubmit(onSubmit)}
           >
+            <FormField
+              control={form.control}
+              name='fullName'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='form-label'>Họ và tên</FormLabel>
+                  <FormControl>
+                    <Input type='text' {...field} className='text-[14px] text-[#323338]' />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name='email'
@@ -127,7 +156,9 @@ const SignUp = () => {
                 </FormItem>
               )}
             />
-            <Button className='bg-[#5F48EA] hover:bg-[#5F48EA] hover:opacity-90'>Sign up</Button>
+            <Button className='bg-[#5F48EA] hover:bg-[#5F48EA] hover:opacity-90'>
+              {isLoading && <LoaderCircle className='mr-2 animate-spin' />}Sign up
+            </Button>
           </form>
         </Form>
         <span className='select-none text-center text-[14px] font-medium text-[#c1c2c3]'>or</span>

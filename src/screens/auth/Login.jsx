@@ -22,6 +22,7 @@ const formSchema = z.object({
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -101,7 +102,10 @@ const Login = () => {
                 Forgot your password?
               </Link>
             </div>
-            <Button className='bg-[#5F48EA] hover:bg-[#5F48EA] hover:opacity-90'>Log In</Button>
+            <Button className='bg-[#5F48EA] hover:bg-[#5F48EA] hover:opacity-90'>
+              {/* {isLoading && <LoaderCircle className='mr-2 animate-spin' />} */}
+              Log In
+            </Button>
           </form>
         </Form>
         <span className='select-none text-center text-[14px] font-medium text-[#c1c2c3]'>or</span>
