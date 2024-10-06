@@ -16,6 +16,8 @@ import { Eye, EyeOff, LoaderCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import handleAPI from '@/apis/handleAPI';
 import { toast } from 'sonner';
+import { addAuth } from '@/redux/reducers/authReducer';
+import { useDispatch } from 'react-redux';
 
 const formSchema = z
   .object({
@@ -36,6 +38,7 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -55,9 +58,12 @@ const SignUp = () => {
 
     try {
       setIsLoading(true);
+
       const res = await handleAPI(api, { fullName, email, password }, 'post');
+
+      dispatch(addAuth(res.data));
+
       toast.success('Đăng ký thành công!');
-      console.log(res.data);
       navigate('/verify');
     } catch (error) {
       toast.error(error?.message || 'Đã xảy ra lỗi khi đăng ký');
