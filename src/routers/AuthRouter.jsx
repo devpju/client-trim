@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Login, SignUp } from '../screens/index.js';
-import VerifyOTP from '@/screens/auth/VerifyOTP.jsx';
+import { Login, SignUp } from '../pages/index.js';
+import VerifyOTP from '@/pages/auth/VerifyOTP.jsx';
 
 const AuthRouter = () => {
   return (
