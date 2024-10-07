@@ -1,15 +1,15 @@
-import axiosClient from './axiosClient';
+import axiosClient from './apiClient';
 
-const handleAPI = async (url, data = {}, method = 'get', options = {}) => {
+const handleAPI = async (endpoint, payload = {}, httpMethod = 'get', config = {}) => {
   try {
-    const response = await axiosClient(url, {
-      method,
-      data,
-      ...options,
+    const response = await axiosClient(endpoint, {
+      method: httpMethod,
+      data: payload,
+      ...config,
     });
     return response;
   } catch (error) {
-    console.error(`Lỗi khi gọi API ${url}:\n`, error);
+    console.error(`Error while calling API ${endpoint}:\n`, error);
     throw error;
   }
 };

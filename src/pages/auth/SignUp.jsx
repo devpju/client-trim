@@ -38,7 +38,7 @@ const SignUp = () => {
 
       dispatch(addAuth(res.data));
 
-      toast.success('Đăng ký thành công!');
+      toast.success(res.message);
       navigate('/verify');
     } catch (error) {
       toast.error(error?.message || 'Đã xảy ra lỗi khi đăng ký');

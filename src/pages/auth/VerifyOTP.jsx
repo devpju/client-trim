@@ -8,15 +8,15 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const VerifyOTP = () => {
-  const [code, setCode] = useState('');
+  const [verificationToken, setVerificationToken] = useState('');
   const navigate = useNavigate();
   const { email } = useSelector(state => state.authReducer);
 
   const handleVerifyOTP = async () => {
     const api = 'auth/verify-email';
-
+    console.log(verificationToken);
     try {
-      const res = await handleAPI(api, { code, email }, 'post');
+      const res = await handleAPI(api, { verificationToken, email }, 'post');
 
       navigate('/');
       toast.success(res.message);
@@ -29,9 +29,9 @@ const VerifyOTP = () => {
     const api = 'auth/resend-verification';
 
     try {
-      await handleAPI(api, { email }, 'post');
+      const res = await handleAPI(api, { email }, 'post');
 
-      toast.success('Mã xác minh mới đã được gửi!');
+      toast.success(res.message);
     } catch (error) {
       toast.error(error?.message || 'Đã xảy ra lỗi khi gửi lại mã xác minh');
     }
@@ -49,7 +49,7 @@ const VerifyOTP = () => {
           inputMode='numeric'
           pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
           onComplete={handleVerifyOTP}
-          onChange={value => setCode(value)}
+          onChange={value => setVerificationToken(value)}
         >
           <InputOTPGroup>
             <InputOTPSlot className='size-14 border-gray-500 text-2xl font-bold' index={0} />

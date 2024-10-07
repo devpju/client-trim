@@ -1,14 +1,13 @@
 import axios from 'axios';
 import queryString from 'query-string';
 
-const baseURL = 'http://192.168.1.101:8080/';
+const BASE_URL = 'http://192.168.1.101:8080/';
 
 const axiosClient = axios.create({
-  baseURL,
+  baseURL: BASE_URL,
   paramsSerializer: params => queryString.stringify(params),
 });
 
-// Cấu hình headers
 const setHeaders = config => {
   config.headers = {
     Authorization: '',
@@ -18,21 +17,18 @@ const setHeaders = config => {
   return config;
 };
 
-// Xử lý lỗi phản hồi
-const handleResponse = res => {
-  if (res.data && res.status >= 200 && res.status < 300) {
-    return res.data;
+const handleResponse = response => {
+  if (response.data && response.status >= 200 && response.status < 300) {
+    return response.data;
   }
-  return Promise.reject(res.data);
+  return Promise.reject(response.data);
 };
 
-// Xử lý lỗi
 const handleError = error => {
   const { response } = error;
   return Promise.reject(response?.data || error.message);
 };
 
-// Áp dụng interceptor
 axiosClient.interceptors.request.use(setHeaders);
 axiosClient.interceptors.response.use(handleResponse, handleError);
 
